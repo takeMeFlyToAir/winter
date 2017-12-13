@@ -17,22 +17,23 @@ import java.util.Map;
  */
 public class GeneratorManager {
 
+
     /**
      * @param tableInfoVO      生成表的信息
      * @param columnInfoVOList 生成表的列信息
      * @param noteInfoVO       生成表的注释信息
-     * @param packageInfo    生成表的包配置信息
+     * @param packageInfo      生成表的包配置信息
      * @param names            生成的模板对象名称
      */
-    public static void generate(TableInfo tableInfoVO, List<FieldInfo> columnInfoVOList, NoteInfo noteInfoVO, PackageInfo packageInfo, List<PageConfig> pageConfigVOList, FileTypeEnum... names) {
+    public static void generate(GeneratorManagerConfig generatorManagerConfig, FileTypeEnum... names) {
         Map map = new HashMap<>();
-        map.put("tableInfo", tableInfoVO);
-        map.put("columnInfoList", columnInfoVOList);
-        map.put("pageConfigList", pageConfigVOList);
-        map.put("noteInfo", noteInfoVO);
-        map.put("packageInfo", packageInfo);
+        map.put("tableInfo", generatorManagerConfig.getTableInfo());
+        map.put("columnInfoList", generatorManagerConfig.getFieldInfoList());
+        map.put("pageConfigList", generatorManagerConfig.getPageConfigList());
+        map.put("noteInfo", generatorManagerConfig.getNoteInfo());
+        map.put("packageInfo", generatorManagerConfig.getPackageInfo());
         for (FileTypeEnum fileTypeEnum : names) {
-            FreeMarkerUtils.generate(map, fileTypeEnum.getTemplateName(), getFileName(packageInfo, fileTypeEnum, tableInfoVO));
+            FreeMarkerUtils.generate(map, fileTypeEnum.getTemplateName(), getFileName(generatorManagerConfig.getPackageInfo(), fileTypeEnum, generatorManagerConfig.getTableInfo()));
         }
 
 
@@ -90,7 +91,6 @@ public class GeneratorManager {
         packageInfo.setSavePath("d:/aa");
 
         NoteInfo noteInfoVO = new NoteInfo();
-        noteInfoVO.setTitle("测试用");
         noteInfoVO.setAuthor("wdd");
         noteInfoVO.setDate(String.valueOf(Instant.now()));
 
@@ -100,39 +100,40 @@ public class GeneratorManager {
         tableInfoVO.setComment("短信模板表");
 
         List<FieldInfo> columnInfoVOList = new ArrayList<>();
-        columnInfoVOList.add(new FieldInfo("name","varchar","(255)","NOT NULL","","模版名称"));
-        columnInfoVOList.add(new FieldInfo("code","varchar","(255)","NOT NULL","","模版编码"));
-        columnInfoVOList.add(new FieldInfo("business_type","varchar","(4)","NOT NULL","","业务类型"));
-        columnInfoVOList.add(new FieldInfo("template_content","varchar","(255)","NOT NULL","","模版内容"));
-        columnInfoVOList.add(new FieldInfo("remarks","varchar","(255)","NOT NULL","","备注信息"));
+        columnInfoVOList.add(new FieldInfo("name", "varchar", "(255)", "NOT NULL", "", "模版名称"));
+        columnInfoVOList.add(new FieldInfo("code", "varchar", "(255)", "NOT NULL", "", "模版编码"));
+        columnInfoVOList.add(new FieldInfo("business_type", "varchar", "(4)", "NOT NULL", "", "业务类型"));
+        columnInfoVOList.add(new FieldInfo("template_content", "varchar", "(255)", "NOT NULL", "", "模版内容"));
+        columnInfoVOList.add(new FieldInfo("remarks", "varchar", "(255)", "NOT NULL", "", "备注信息"));
 
         List<PageConfig> pageConfigVOList = new ArrayList<>();
 
-        GeneratorManager.generate(tableInfoVO, columnInfoVOList, noteInfoVO, packageInfo,pageConfigVOList, FileTypeEnum.PO,FileTypeEnum.MAPPER,
+
+        GeneratorManager.generate(GeneratorManagerConfig.newInstance().setFieldInfoList(columnInfoVOList).setTableInfo(tableInfoVO).setNoteInfo(noteInfoVO).setPackageInfo(packageInfo).setpageConfigList(pageConfigVOList).build(), FileTypeEnum.PO, FileTypeEnum.MAPPER,
                 FileTypeEnum.VO, FileTypeEnum.CONTROLLER, FileTypeEnum.SERVICE,
-                FileTypeEnum.SERVICE_IMPL, FileTypeEnum.SQL, FileTypeEnum.SERVICE_TEST,FileTypeEnum.VUE_VIEW);
+                FileTypeEnum.SERVICE_IMPL, FileTypeEnum.SQL, FileTypeEnum.SERVICE_TEST, FileTypeEnum.VUE_VIEW);
 
-        TableInfo tableInfoVO1 = new TableInfo();
-        tableInfoVO1.setClassName("SmsSendLog");
-        tableInfoVO1.setTableName("sms_send_log");
-        tableInfoVO1.setComment("短信发送日志表");
-
-        List<FieldInfo> columnInfoVOList1 = new ArrayList<>();
-
-        columnInfoVOList1.add(new FieldInfo("phone","varchar","(255)","NOT NULL","","联系电话"));
-        columnInfoVOList1.add(new FieldInfo("template_id","bigint","(20)","NOT NULL","","模版id"));
-        columnInfoVOList1.add(new FieldInfo("template_content","varchar","(255)","NOT NULL","","模版内容"));
-        columnInfoVOList1.add(new FieldInfo("business_type","varchar","(4)","NOT NULL","","业务类型"));
-        columnInfoVOList1.add(new FieldInfo("send_data","varchar","(255)","NOT NULL","","发送数据"));
-        columnInfoVOList1.add(new FieldInfo("send_id","bigint","(20)","NOT NULL","","发送响应消息ID"));
-        columnInfoVOList1.add(new FieldInfo("response_msg","varchar","(20)","NOT NULL","","响应消息"));
-        columnInfoVOList1.add(new FieldInfo("remarks","varchar","(255)","NOT NULL","","备注信息"));
-
-        List<PageConfig> pageConfigVOList1 = new ArrayList<>();
-
-        GeneratorManager.generate(tableInfoVO1, columnInfoVOList1, noteInfoVO, packageInfo,pageConfigVOList1, FileTypeEnum.PO,
-                FileTypeEnum.VO, FileTypeEnum.CONTROLLER, FileTypeEnum.SERVICE,FileTypeEnum.MAPPER,
-                FileTypeEnum.SERVICE_IMPL, FileTypeEnum.SQL, FileTypeEnum.SERVICE_TEST,FileTypeEnum.VUE_VIEW);
+//        TableInfo tableInfoVO1 = new TableInfo();
+//        tableInfoVO1.setClassName("SmsSendLog");
+//        tableInfoVO1.setTableName("sms_send_log");
+//        tableInfoVO1.setComment("短信发送日志表");
+//
+//        List<FieldInfo> columnInfoVOList1 = new ArrayList<>();
+//
+//        columnInfoVOList1.add(new FieldInfo("phone", "varchar", "(255)", "NOT NULL", "", "联系电话"));
+//        columnInfoVOList1.add(new FieldInfo("template_id", "bigint", "(20)", "NOT NULL", "", "模版id"));
+//        columnInfoVOList1.add(new FieldInfo("template_content", "varchar", "(255)", "NOT NULL", "", "模版内容"));
+//        columnInfoVOList1.add(new FieldInfo("business_type", "varchar", "(4)", "NOT NULL", "", "业务类型"));
+//        columnInfoVOList1.add(new FieldInfo("send_data", "varchar", "(255)", "NOT NULL", "", "发送数据"));
+//        columnInfoVOList1.add(new FieldInfo("send_id", "bigint", "(20)", "NOT NULL", "", "发送响应消息ID"));
+//        columnInfoVOList1.add(new FieldInfo("response_msg", "varchar", "(20)", "NOT NULL", "", "响应消息"));
+//        columnInfoVOList1.add(new FieldInfo("remarks", "varchar", "(255)", "NOT NULL", "", "备注信息"));
+//
+//        List<PageConfig> pageConfigVOList1 = new ArrayList<>();
+//
+//        GeneratorManager.generate(tableInfoVO1, columnInfoVOList1, noteInfoVO, packageInfo, pageConfigVOList1, FileTypeEnum.PO,
+//                FileTypeEnum.VO, FileTypeEnum.CONTROLLER, FileTypeEnum.SERVICE, FileTypeEnum.MAPPER,
+//                FileTypeEnum.SERVICE_IMPL, FileTypeEnum.SQL, FileTypeEnum.SERVICE_TEST, FileTypeEnum.VUE_VIEW);
 
 
     }

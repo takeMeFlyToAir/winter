@@ -3,8 +3,9 @@ package com.winter.business.service;
 import com.winter.business.dao.BaseDaoHelper;
 import com.winter.business.entity.BusinessEntity;
 import com.winter.business.mapper.BaseMapper;
+import com.winter.business.page.Pager;
+import com.winter.business.page.PagerResult;
 import org.springframework.stereotype.Service;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +43,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public V save(V entity) {
-        return toVO(BaseDaoHelper.save(toPO(entity),getBaseMaper()));
+        return toVO(BaseDaoHelper.save(toPO(entity),getBaseMapper()));
     }
 
     /**
@@ -53,7 +54,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public int saveList(List<V> entity) {
-        return BaseDaoHelper.saveList(toPOList(entity),getBaseMaper());
+        return BaseDaoHelper.saveList(toPOList(entity),getBaseMapper());
     }
 
     /**
@@ -64,7 +65,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public int update(V entity) {
-        return BaseDaoHelper.update(toPO(entity),getBaseMaper());
+        return BaseDaoHelper.update(toPO(entity),getBaseMapper());
     }
 
     /**
@@ -75,7 +76,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public int updateSelective(V entity) {
-        return BaseDaoHelper.updateSelective(toPO(entity),getBaseMaper());
+        return BaseDaoHelper.updateSelective(toPO(entity),getBaseMapper());
     }
 
     /**
@@ -86,7 +87,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public int delete(V entity) {
-        return BaseDaoHelper.delete(toPO(entity),getBaseMaper());
+        return BaseDaoHelper.delete(toPO(entity),getBaseMapper());
     }
 
     /**
@@ -97,7 +98,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public int deleteByKey(V entity) {
-        return BaseDaoHelper.deleteByKey(toPO(entity),getBaseMaper());
+        return BaseDaoHelper.deleteByKey(toPO(entity),getBaseMapper());
     }
 
     /**
@@ -108,7 +109,7 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public V get(Object key) {
-        return toVO(BaseDaoHelper.get(key,getBaseMaper()));
+        return toVO(BaseDaoHelper.get(key,getBaseMapper()));
     }
 
     /**
@@ -119,6 +120,36 @@ public abstract class BaseServiceImpl<P extends BusinessEntity,V> implements Bas
      */
     @Override
     public List<V> select(V entity) {
-        return toVOList(BaseDaoHelper.select(toPO(entity),getBaseMaper()));
+        return toVOList(BaseDaoHelper.select(toPO(entity),getBaseMapper()));
+    }
+
+
+    private Pager<P> toPagerPO(Pager<V> pager){
+        Pager<P> pagerP = new Pager<>();
+        pagerP.setLimit(pager.getLimit());
+        pagerP.setOffset(pager.getOffset());
+        pagerP.setCondition(toPO(pager.getCondition()));
+        return  pagerP;
+    }
+
+    private PagerResult<V> toPagerResultVO(PagerResult<P> pPagerResult){
+        PagerResult<V> pagerResultVO = pPagerResult.convertPagerResult(new PagerResult.Converter<P, V>(){
+            @Override
+            public V convert(P p) {
+                V vo = toVO(p);
+                return vo;
+            }
+        });
+        return pagerResultVO;
+    }
+    /**
+     * 分页查询
+     *
+     * @param pager
+     * @return
+     */
+    @Override
+    public PagerResult<V> getPagerResult(Pager<V> pager) {
+          return toPagerResultVO(BaseDaoHelper.getPagerResult(toPagerPO(pager),getBaseMapper()));
     }
 }

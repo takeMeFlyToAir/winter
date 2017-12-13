@@ -3,6 +3,9 @@ package com.winter.business.dao;
 import com.winter.business.entity.BusinessEntity;
 import com.winter.business.mapper.BaseMapper;
 import com.winter.business.util.EntityUtil;
+import com.winter.business.page.Pager;
+import com.winter.business.page.PagerResult;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.List;
 
@@ -102,6 +105,16 @@ public class BaseDaoHelper {
      */
     public static <T> List<T> select(T entity, BaseMapper<T> mapper) {
         return mapper.select(entity);
+    }
+
+    public static <T> PagerResult<T> getPagerResult(Pager<T> pager, BaseMapper<T> mapper){
+        PagerResult<T> pagerResult = new PagerResult<>();
+        pagerResult.setLimit(pager.getLimit());
+        pagerResult.setOffset(pager.getOffset());
+        pagerResult.setTotal(mapper.selectCount(pager.getCondition()));
+        RowBounds rowBounds = new RowBounds(pager.getOffset(),pager.getLimit());
+        pagerResult.setRows(mapper.selectByExampleAndRowBounds(pager.getCondition(),rowBounds));
+        return  pagerResult;
     }
 
 

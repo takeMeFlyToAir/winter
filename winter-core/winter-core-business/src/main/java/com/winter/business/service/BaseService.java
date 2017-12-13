@@ -1,6 +1,9 @@
 package com.winter.business.service;
 
 
+import com.winter.business.page.Pager;
+import com.winter.business.page.PagerResult;
+
 import java.util.List;
 
 public interface BaseService<T> {
@@ -70,7 +73,12 @@ public interface BaseService<T> {
     List<T> select(T entity);
 
 
-
+    /**
+     * 分页查询
+     * @param pager
+     * @return
+     */
+    PagerResult<T> getPagerResult(Pager<T> pager);
 
 
 }

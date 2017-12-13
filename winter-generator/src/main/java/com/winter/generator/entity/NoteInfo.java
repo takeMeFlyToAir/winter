@@ -11,20 +11,9 @@ import java.io.Serializable;
  * 创建时间: 2017/12/4
  */
 @Data
-@ToString
 public class NoteInfo implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 简述
-     */
-    private String  title;
-
-    /**
-     * 描述
-     */
-    private String  description;
 
     /**
      * 创建人

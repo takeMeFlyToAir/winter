@@ -7,7 +7,6 @@ import lombok.ToString;
 import javax.persistence.Id;
 
 @Data
-@ToString
 public abstract class BusinessEntity extends BaseEntity {
 
     @Id
